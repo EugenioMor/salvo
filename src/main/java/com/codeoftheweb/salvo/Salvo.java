@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-public class Ship {
+public class Salvo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -17,16 +17,19 @@ public class Ship {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    private String type;
+    private String turn;
 
     @ElementCollection
     @Column(name = "locations")
     private List<String> locations = new ArrayList<>();
 
-    public Ship() {};
+    public Salvo() {
+    }
 
-    public Ship(String type,GamePlayer gamePlayer, List<String> locations) {
-        this.type = type;
+    ;
+
+    public Salvo(String turn, GamePlayer gamePlayer, List<String> locations) {
+        this.turn = turn;
         this.gamePlayer = gamePlayer;
         this.locations = locations;
 
@@ -37,7 +40,7 @@ public class Ship {
     }
 
     public void setId(long id) {
-        id = id;
+        this.id = id;
     }
 
     public GamePlayer getGamePlayer() {
@@ -48,12 +51,12 @@ public class Ship {
         this.gamePlayer = gamePlayer;
     }
 
-    public String getType() {
-        return type;
+    public String getTurn() {
+        return turn;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTurn(String turn) {
+        this.turn = turn;
     }
 
     public List<String> getLocations() {
@@ -63,5 +66,4 @@ public class Ship {
     public void setLocations(List<String> locations) {
         this.locations = locations;
     }
-
 }

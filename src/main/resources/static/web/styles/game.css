@@ -1,0 +1,54 @@
+
+body {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background: url("../img/battle-photo.jpg") center fixed;
+
+}
+
+table {
+    margin-top: 100px;
+    text-align: center;
+}
+
+.tabla {
+    margin-top: 100px;
+}
+
+th, {
+    background-color: #fff !important;
+    color: black;
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+}
+
+h2 {
+    text-align: center;
+    color: #fff;
+}
+
+.ship0 {
+    background-color: red !important;
+}
+
+.ship1 {
+    background-color: #fff !important;
+}
+
+.ship2 {
+    background-color: yellow !important;
+}
+
+.ship3 {
+    background-color: green !important;
+}
+
+.ship4 {
+    background-color: blue !important;
+}
+

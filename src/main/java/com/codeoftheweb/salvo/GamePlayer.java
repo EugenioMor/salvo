@@ -3,6 +3,7 @@ package com.codeoftheweb.salvo;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -20,6 +21,13 @@ public class GamePlayer {
     @JoinColumn(name = "game_id")
     private Game game;
 
+    @OneToMany (fetch = FetchType.EAGER, mappedBy = "gamePlayer")
+    private Set <Ship> ships = new HashSet<>();
+
+    @OneToMany (fetch = FetchType.EAGER, mappedBy = "gamePlayer")
+    private Set <Salvo> salvos = new HashSet<>();
+
+
     private LocalDateTime date;
 
     public GamePlayer() {}
@@ -28,6 +36,25 @@ public class GamePlayer {
         this.date = date;
         this.player = player;
         this.game = game;
+    }
+
+    public void AddShip(Ship ship) {
+        ship.setGamePlayer(this);
+        ships.add(ship);
+    }
+
+
+    public void AddSalvo(Salvo salvo) {
+        salvo.setGamePlayer(this);
+        salvos.add(salvo);
+    }
+
+    public Set<Salvo> getSalvos() {
+        return salvos;
+    }
+
+    public void setSalvos(Set<Salvo> salvos) {
+        this.salvos = salvos;
     }
 
     public long getId() {
@@ -64,5 +91,8 @@ public class GamePlayer {
 
     public Set<Ship> getShips() {return ships;}
 
-    public void setShips(Set<Ship> ships) { this.ship = ships; }
+    public void setShips(Set<Ship> ships) {
+        this.ships = ships;
+    }
+
 }
