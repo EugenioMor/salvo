@@ -1,15 +1,25 @@
-
 body {
     background-attachment: fixed;
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background: url("../img/battle-photo.jpg") center fixed;
+    background: url("../img/background.jpg") center fixed;
+}
 
+.salvo1 {
+   background: url("../img/water.jpg") !important;
+}
+
+.salvo2 {
+    background-color: purple !important;
+}
+
+.hit {
+   background: url("../img/fire.jpg") !important;
 }
 
 table {
-    margin-top: 100px;
+    margin-top: 50px;
     text-align: center;
 }
 

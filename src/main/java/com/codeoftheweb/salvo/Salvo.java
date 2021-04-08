@@ -26,8 +26,6 @@ public class Salvo {
     public Salvo() {
     }
 
-    ;
-
     public Salvo(String turn, GamePlayer gamePlayer, List<String> locations) {
         this.turn = turn;
         this.gamePlayer = gamePlayer;

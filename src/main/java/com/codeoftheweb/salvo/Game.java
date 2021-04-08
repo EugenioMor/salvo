@@ -64,7 +64,6 @@ public class Game {
 
         this.gamePlayers = gamePlayers;
     }
-
 }
 
 

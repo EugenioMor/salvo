@@ -43,7 +43,6 @@ public class GamePlayer {
         ships.add(ship);
     }
 
-
     public void AddSalvo(Salvo salvo) {
         salvo.setGamePlayer(this);
         salvos.add(salvo);

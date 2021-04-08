@@ -5,11 +5,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -27,7 +25,6 @@ public class SalvoController {
 
     @Autowired
     SalvoRepository salvoRepository;
-
 
     @GetMapping("/game_view/{gamePlayerId}")
     public Map<String, Object> findGamePlayer(@PathVariable Long gamePlayerId) {
@@ -92,8 +89,7 @@ public class SalvoController {
         dto.put("created", gamePlayer.getGame().getDate());
         dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers().stream().map(this::makeGamePlayerDTO).collect(toList()));
         dto.put("ships", gamePlayer.getShips().stream().map(this::makeShipDTO).collect(toList()));
-        dto.put("salvoes", gamePlayer.getGame().getGamePlayers().stream().flatMap((a) -> a.getSalvos().stream().map(this::makeSalvoDTO)));
-
+        dto.put("salvos", gamePlayer.getGame().getGamePlayers().stream().flatMap((a) -> a.getSalvos().stream().map(this::makeSalvoDTO)));
         return dto;
     }
 }
