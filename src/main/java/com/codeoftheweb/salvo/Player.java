@@ -2,7 +2,9 @@ package com.codeoftheweb.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import static java.util.stream.Collectors.toList;
 
@@ -15,6 +17,9 @@ public class Player {
 
     @OneToMany (mappedBy = "player", fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
+
+    @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
+    private  Set<Score> scores = new HashSet<>();
 
     private String userName;
 
@@ -30,6 +35,7 @@ public class Player {
         gamePlayers.add(gamePlayer);
     }
 
+
     public List<Game> getGames() {
 
         return gamePlayers.stream().map(sub -> sub.getGame()).collect(toList());
@@ -38,6 +44,10 @@ public class Player {
     public String getUserName() {
 
         return userName;
+    }
+
+    public Optional<Score> getScore (Game game) {
+        return getScores().stream().filter(el -> el.getGame().equals(game)).findFirst();
     }
 
     public void setUserName(String userName) {
@@ -60,4 +70,23 @@ public class Player {
         this.id = id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Set<GamePlayer> getGamePlayers() {
+        return gamePlayers;
+    }
+
+    public void setGamePlayers(Set<GamePlayer> gamePlayers) {
+        this.gamePlayers = gamePlayers;
+    }
+
+    public Set<Score> getScores() {
+        return scores;
+    }
+
+    public void setScores(Set<Score> scores) {
+        this.scores = scores;
+    }
 }
