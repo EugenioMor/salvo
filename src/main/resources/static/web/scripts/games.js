@@ -3,20 +3,23 @@ fetch("http://localhost:8080/api/games")
         return response.json();
     })
     .then(function (data) {
-        app.games = data
+        app.currentUser = data.player;
+        app.games = data.games;
         app.leaderBoard();
     })
-
 
 var app = new Vue({
     el: "#app",
     data: {
         games: [],
         leaderboard: [],
-
+        username: "",
+        password: "",
+        currentUser: null,
     },
 
     methods: {
+        //obtención de los jugadores
         getPlayers: function () {
             var mailsArray = [];
 
@@ -29,7 +32,7 @@ var app = new Vue({
             }
             return mailsArray;
         },
-
+        //puntaje total
         totalScore: function (email) {
             var score = 0;
 
@@ -42,7 +45,7 @@ var app = new Vue({
             }
             return score;
         },
-
+        //victorias de cada jugador
         countWins: function (email) {
             var wins = 0
 
@@ -55,7 +58,7 @@ var app = new Vue({
             }
             return wins;
         },
-
+        //derrotas de cada jugador
         countLosses: function (email) {
             var losses = 0
 
@@ -68,7 +71,7 @@ var app = new Vue({
             }
             return losses;
         },
-
+        //empates de cada jugador
         countTies: function (email) {
             var ties = 0
 
@@ -81,7 +84,7 @@ var app = new Vue({
             }
             return ties;
         },
-
+        //
         leaderBoard: function () {
             let players = app.getPlayers()
 
@@ -97,12 +100,46 @@ var app = new Vue({
                     losses: losses,
                     ties: ties,
                     total: total
-
                 }
-
                 app.leaderboard.push(newPlayerScore)
             }
-        }
+        },
 
+        //funcion para loguearse
+        login: function () {
+            $.post("/api/login", {
+                    username: app.username,
+                    password: app.password
+                })
+                .done(function () {
+                    alert("logged in!");
+                    location.reload();
+                })
+                .fail(function () {
+                    alert("login failed");
+                })
+        },
+        //función para registrarse
+        signup: function () {
+            $.post("/api/players", {
+                    username: app.username,
+                    password: app.password
+                })
+                .done(function () {
+                    app.login();
+                    alert("successfully registered");
+                })
+                .fail(function () {
+                    alert("Error, cannot create user");
+                });
+        },
+        //función para cerrar sesión
+        logout: function () {
+            $.post("/api/logout")
+                .done(function () {
+                    app.currentUser = null;
+                    location.reload();
+                })
+        },
     }
 })

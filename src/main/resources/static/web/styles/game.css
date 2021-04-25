@@ -23,11 +23,12 @@ table {
     text-align: center;
 }
 
+
 .tabla {
     margin-top: 100px;
 }
 
-th, {
+th {
     background-color: #fff !important;
     color: black;
 }

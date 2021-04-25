@@ -1,14 +1,36 @@
 package com.codeoftheweb.salvo;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 @SpringBootApplication
-public class SalvoApplication {
+public class SalvoApplication  extends SpringBootServletInitializer {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public static void main(String[] args) {
         SpringApplication.run(SalvoApplication.class, args);
@@ -36,13 +58,13 @@ public class SalvoApplication {
             gameRepository.save(game4);
 
 
-            Player player1 = new Player("j.bauer@ctu.gov");
-            Player player2 = new Player("c.obrian@ctu.gov");
-            Player player3 = new Player("kim_bauer@gmail.com");
-            Player player4 = new Player("t.almeida@ctu.gov");
+            Player player1 = new Player("j.bauer@ctu.gov", passwordEncoder.encode("24"));
+            Player player2 = new Player("c.obrian@ctu.gov", passwordEncoder.encode( "42"));
+            Player player3 = new Player("kim_bauer@gmail.com", passwordEncoder.encode( "kb"));
+            Player player4 = new Player("t.almeida@ctu.gov", passwordEncoder.encode( "mole"));
 
             playerRepository.save(player1);
-            playerRepository.save(player2);  
+            playerRepository.save(player2);
             playerRepository.save(player3);
             playerRepository.save(player4);
 
@@ -117,3 +139,63 @@ public class SalvoApplication {
         };
     }
 }
+
+@Configuration
+class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
+
+    @Autowired
+    PlayerRepository playerRepository;
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
+    @Override
+    public void init(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(inputUserName-> {
+            Player player = playerRepository.findByUserName(inputUserName);
+            if (player != null) {
+                return new User(player.getUserName(), player.getPassword(),
+                        AuthorityUtils.createAuthorityList("USER"));
+            } else {
+                throw new UsernameNotFoundException("Unknown user: " + inputUserName);
+            }
+        });
+    }
+}
+
+@Configuration
+@EnableWebSecurity
+class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .antMatchers("/web/game.html", "/api/game_view/**").hasAuthority("USER")
+                .antMatchers("/rest/**").hasAuthority("USER")
+                .antMatchers("/**").permitAll()
+                .and();
+
+        http.formLogin()
+                .usernameParameter("username")
+                .passwordParameter("password")
+                .loginPage("/api/login");
+        http.logout().logoutUrl("/api/logout");
+
+        http.headers().frameOptions().disable();
+        http.csrf().disable();
+        http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+        http.formLogin().successHandler((req, res, auth) -> clearAuthenticationAttributes(req));
+        http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+        http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+    }
+
+    private void clearAuthenticationAttributes(HttpServletRequest request) {
+        HttpSession session = request.getSession(false);
+        if (session != null) {
+            session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+        }
+    }
+}
+
+

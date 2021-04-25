@@ -1,0 +1,32 @@
+body {
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background: url("../img/background.jpg") center fixed;
+}
+
+h1 {
+    text-align: center;
+}
+
+.form {
+    margin-bottom: 50px ;
+}
+
+.form1 {
+    margin-bottom: 5px;;
+}
+
+.form-group {
+    width: 250px;
+}
+
+.btn-btn-primary {
+    border-color: 0;
+}
+
+.signup-button {
+    background-color: red;
+    margin-left: 95px;
+}

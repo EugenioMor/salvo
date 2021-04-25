@@ -27,6 +27,7 @@ var app = new Vue({
 
     },
     methods: {
+        //pinta las naves
         paintShips: function () {
             for (i = 0; i < app.gameView.ships.length; i++) {
                 for (j = 0; j < app.gameView.ships[i].locations.length; j++) {
@@ -78,13 +79,14 @@ var app = new Vue({
                     }
                 }
             }
+        },
+
+        logout: function () {
+            $.post("/api/logout")
+                .done(function () {
+                    app.currentUser = null;
+                    window.location.replace("games.html");
+                })
         }
     }
 })
-
-
-
-
-
-
-

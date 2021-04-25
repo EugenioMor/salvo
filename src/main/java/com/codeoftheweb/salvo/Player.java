@@ -1,15 +1,18 @@
 package com.codeoftheweb.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.RequestMapping;
+
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+
 import static java.util.stream.Collectors.toList;
 
 @Entity
 public class Player {
+
+    //properties
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
@@ -22,12 +25,14 @@ public class Player {
     private  Set<Score> scores = new HashSet<>();
 
     private String userName;
+    private String password;
 
+    //constructors
     public Player() {}
 
-    public Player(String userName) {
-
+    public Player(String userName, String password) {
         this.userName = userName;
+        this.password = password;
     }
 
     public void addGamePlayer (GamePlayer gamePlayer) {
@@ -35,6 +40,13 @@ public class Player {
         gamePlayers.add(gamePlayer);
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public List<Game> getGames() {
 
