@@ -41,16 +41,22 @@
                             Log Out
                         </button>
                     </form>
+                    <div>
+                        <button type="button" class="btn btn-primary" v-on:click="createGame()">Create game</button>
+                    </div>
                 </div>
+
             </div>
             <div class="row">
                 <div class="col-6">
                     <ol>
-                        <li v-for="game in games">
-                            {{" Date: " + game.date}}
+                        <li v-for="game in games">{{" Date: " + game.date}}
                             <ul>
-                                <li v-for="games in game.GamePlayers">
-                                    {{games.player.email}}
+                                <li v-for="gamePlayer in game.GamePlayers">
+                                    <span v-if="currentUser != null && currentUser.id == gamePlayer.player.id"><a
+                                            v-bind:href="'game.html?gp=' + gamePlayer.id">{{gamePlayer.player.email}}</a>
+                                    </span>
+                                    <span v-else>{{gamePlayer.player.email}}</span>
                                 </li>
                             </ul>
                         </li>

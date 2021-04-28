@@ -19,7 +19,7 @@ var app = new Vue({
     },
 
     methods: {
-        //obtención de los jugadores
+        //Obtención de los jugadores
         getPlayers: function () {
             var mailsArray = [];
 
@@ -32,7 +32,7 @@ var app = new Vue({
             }
             return mailsArray;
         },
-        //puntaje total
+        //Puntaje total
         totalScore: function (email) {
             var score = 0;
 
@@ -45,7 +45,7 @@ var app = new Vue({
             }
             return score;
         },
-        //victorias de cada jugador
+        //Victorias de cada jugador
         countWins: function (email) {
             var wins = 0
 
@@ -58,7 +58,7 @@ var app = new Vue({
             }
             return wins;
         },
-        //derrotas de cada jugador
+        //Derrotas de cada jugador
         countLosses: function (email) {
             var losses = 0
 
@@ -71,7 +71,7 @@ var app = new Vue({
             }
             return losses;
         },
-        //empates de cada jugador
+        //Empates de cada jugador
         countTies: function (email) {
             var ties = 0
 
@@ -105,7 +105,7 @@ var app = new Vue({
             }
         },
 
-        //funcion para loguearse
+        //función para loguearse
         login: function () {
             $.post("/api/login", {
                     username: app.username,
@@ -141,5 +141,12 @@ var app = new Vue({
                     location.reload();
                 })
         },
+        //función para crear juego
+        createGame: function () {
+            $.post("/api/games")
+                .done(function (data) {
+                    location.href = "/web/game.html?gp=" + data.gpid
+                })
+        }
     }
 })
