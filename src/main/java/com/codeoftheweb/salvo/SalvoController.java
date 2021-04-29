@@ -49,7 +49,7 @@ public class SalvoController {
         return new ResponseEntity<>(makeGameViewDTO(gamePlayer.get()), HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/players", method = RequestMethod.POST)
+    @PostMapping("/players")
     public ResponseEntity<Object> register(
             @RequestParam String username, @RequestParam String password) {
 
@@ -60,7 +60,6 @@ public class SalvoController {
         if (playerRepository.findByUserName(username) != null) {
             return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
         }
-
         playerRepository.save(new Player(username, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
@@ -77,7 +76,36 @@ public class SalvoController {
         }
     }
 
-    @RequestMapping("/games")
+    @PostMapping("/games/{gameId}/players")
+    public ResponseEntity<Map<String, Object>> joinGame(Authentication authentication, @PathVariable long gameId) {
+        if (!isGuest(authentication)) {
+            Optional<Game> game = gameRepository.findById(gameId);
+
+            if (game.isEmpty()) {
+                return new ResponseEntity<>(makeMap("error", "Game not found"), HttpStatus.NOT_FOUND);
+            }
+
+            Player player = playerRepository.findByUserName(authentication.getName());
+            if (game.get().getGamePlayers().stream().anyMatch(gamePlayer -> gamePlayer.getPlayer().getId() == player.getId())) {
+                return new ResponseEntity<>(makeMap("error", "You are already playing this game"), HttpStatus.FORBIDDEN);
+
+            } else {
+                if (game.get().getGamePlayers().size() == 1) {
+                    GamePlayer gamePlayer = new GamePlayer(LocalDateTime.now(), game.get(), player);
+
+                    gamePlayerRepository.save(gamePlayer);
+                    return new ResponseEntity<>(makeMap("gpid", gamePlayer.getId()), HttpStatus.CREATED);
+
+                } else {
+                    return new ResponseEntity<>(makeMap("error", "The game is full"), HttpStatus.FORBIDDEN);
+                }
+            }
+        } else {
+            return new ResponseEntity<>(makeMap("error", "You are not logged in"), HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping("/games")
     public Map<String, Object> getGames(Authentication authentication) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         if (!isGuest(authentication)) {
@@ -90,12 +118,12 @@ public class SalvoController {
         return dto;
     }
 
-    @RequestMapping("/players")
+    @GetMapping("/players")
     public List<Map<String, Object>> getPlayers() {
         return playerRepository.findAll().stream().map(this::makePlayerDTO).collect(toList());
     }
 
-    @RequestMapping("/gamePlayers")
+    @GetMapping("/gamePlayers")
     public List<Map<String, Object>> getGamePlayers() {
         return gamePlayerRepository.findAll().stream().map(this::makeGamePlayerDTO).collect(toList());
     }

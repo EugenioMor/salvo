@@ -147,6 +147,13 @@ var app = new Vue({
                 .done(function (data) {
                     location.href = "/web/game.html?gp=" + data.gpid
                 })
+        },
+        //unirse a un juego
+        joinGame: function (gameId) {
+            $.post("/api/games/" + gameId + "/players")
+                .done(function (data) {
+                    location.href = "/web/game.html?gp=" + data.gpid;
+                })
         }
     }
 })
