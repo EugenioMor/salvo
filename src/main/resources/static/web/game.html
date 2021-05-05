@@ -17,6 +17,8 @@
                     <div class="logout-game">
                         <button type="button" class="btn btn-primary" v-on:click="logout()">Log Out</button>
                     </div>
+                    <div>
+                        <a href="http://localhost:8080/web/games.html" class="btn btn-success">Come back</a> </div>
                     <h2>Player 1: {{mainPlayer.email}} (you) vs Player 2: {{secondPlayer.email}}</h2>
                     <div class="col-6">
                         <table class="table table-bordered table-dark">
@@ -46,6 +48,10 @@
                                     <td>{{rowTwo}}</td>
                                     <td v-bind:id="rowTwo + column" v-for="column in columns"></td>
                                 </tr>
+                                <div>
+                                    <button type="button" class="btn btn-primary" v-on:click="shipPost()">add
+                                        ships</button>
+                                </div>
                             </tbody>
                         </table>
                     </div>

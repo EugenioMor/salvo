@@ -112,12 +112,16 @@ var app = new Vue({
                     password: app.password
                 })
                 .done(function () {
-                    alert("logged in!");
                     location.reload();
                 })
-                .fail(function () {
-                    alert("login failed");
-                })
+
+            Swal.fire({
+                position: 'center',
+                icon: 'success',
+                title: 'You logged in!',
+                showConfirmButton: false,
+                timer: 500
+            })
         },
         //función para registrarse
         signup: function () {
@@ -127,11 +131,20 @@ var app = new Vue({
                 })
                 .done(function () {
                     app.login();
-                    alert("successfully registered");
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'You logged in!',
+                        showConfirmButton: false,
+                        timer: 500
+                    })
                 })
-                .fail(function () {
-                    alert("Error, cannot create user");
-                });
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Cannot create user!',
+                footer: '<a href>Why do I have this issue?</a>'
+            })
         },
         //función para cerrar sesión
         logout: function () {

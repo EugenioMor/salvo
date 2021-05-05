@@ -105,6 +105,36 @@ public class SalvoController {
         }
     }
 
+    @PostMapping("games/players/{gamePlayerId}/ships")
+    public ResponseEntity<Map<String, Object>> addShips(Authentication authentication, @PathVariable long gamePlayerId, @RequestBody List<Ship> ships) {
+        if (isGuest(authentication)) {
+            return new ResponseEntity<>(makeMap("error", "You have to logged in."), HttpStatus.UNAUTHORIZED);
+
+        } else {
+            Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
+            Player player = playerRepository.findByUserName(authentication.getName());
+            if (gamePlayer.isEmpty()) {
+                return new ResponseEntity<>(makeMap("error", "Game not found"), HttpStatus.NOT_FOUND);
+
+            } else if (gamePlayer.get().getPlayer().getId() != player.getId()) {
+                return new ResponseEntity<>(makeMap("error", "This is not your game"), HttpStatus.UNAUTHORIZED);
+
+            } else if (gamePlayer.get().getShips().size() > 0) {
+                return new ResponseEntity<>(makeMap("error", "all ships placed"), HttpStatus.FORBIDDEN);
+
+            } else if (ships.size() != 5) {
+                return new ResponseEntity<>(makeMap("error", "you must have 5 ships"), HttpStatus.FORBIDDEN);
+
+            } else {
+                for (Ship ship : ships) {
+                    gamePlayer.get().AddShip(ship);
+                }
+                gamePlayerRepository.save(gamePlayer.get());
+                return new ResponseEntity<>(makeMap("done!", "You have added the ships"), HttpStatus.CREATED);
+            }
+        }
+    }
+
     @GetMapping("/games")
     public Map<String, Object> getGames(Authentication authentication) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();

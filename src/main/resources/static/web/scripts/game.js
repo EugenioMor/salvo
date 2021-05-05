@@ -13,6 +13,7 @@ fetch(url)
         app.viewer();
         app.salvos();
         app.match();
+        app.shipJson();
     })
 
 var app = new Vue({
@@ -24,6 +25,7 @@ var app = new Vue({
         rowsTwo: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
         mainPlayer: [],
         secondPlayer: [],
+        shipsArray: [],
 
     },
     methods: {
@@ -86,6 +88,51 @@ var app = new Vue({
                 .done(function () {
                     app.currentUser = null;
                     window.location.replace("games.html");
+                })
+        },
+
+        shipJson: function () {
+            for (let i = 0; i < app.gameView.ships.length; i++) {
+                app.shipsArray.push({
+                    "type": app.gameView.ships[i].type,
+                    "locations": app.gameView.ships[i].locations
+                })
+            }
+        },
+
+        shipPost: function () {
+            $.post({
+                    url: "/api/games/players/" + gamePlayerId + "/ships",
+                    data: JSON.stringify([{
+                            "type": "Destroyer",
+                            "locations": ["B3", "B4", "B5", "B6", "B7"]
+                        },
+                        {
+                            "type": "Destroyer",
+                            "locations": ["C1", "C2", "C3", "C4"]
+                        },
+                        {
+                            "type": "Destroyer",
+                            "locations": ["A9", "B9", "C9"]
+                        },
+                        {
+                            "type": "Destroyer",
+                            "locations": ["D1", "D2", "D3"]
+                        },
+                        {
+                            "type": "Destroyer",
+                            "locations": ["J3", "J4"]
+                        }
+
+                    ]),
+                    dataType: "text",
+                    contentType: "application/json"
+                })
+                .done(function (response, status, jqXHR) {
+                    alert("Ship added: " + response), location.reload();
+                })
+                .fail(function (jqXHR, status, httpError) {
+                    alert("Failed to add ship: " + textStatus + " " + httpError);
                 })
         }
     }
