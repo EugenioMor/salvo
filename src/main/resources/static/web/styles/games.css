@@ -6,16 +6,37 @@ body {
     background: url("../img/background.jpg") center fixed;
 }
 
+.gamesList {
+    margin-left: 100px;
+}
+
+.logout-create {
+    margin-bottom: 10px;
+    margin-left: 50px;
+}
+
 h1 {
     text-align: center;
+    font-family: "Bangers";
+    margin-top: 30px;
+    font-size: 85px;
+    color: black
+}
+
+h4 {
+    margin-left: 50px;
+    margin-bottom: 60px;
+    margin-top: 70px;
 }
 
 .form {
-    margin-bottom: 50px ;
+    margin-bottom: 50px;
 }
 
 .form1 {
-    margin-bottom: 5px;;
+    margin-bottom: 5px;
+    margin-left: 560px;
+    margin-top: 50px;
 }
 
 .form-group {
@@ -29,4 +50,12 @@ h1 {
 .signup-button {
     background-color: red;
     margin-left: 95px;
+}
+
+.ol-list {
+    font-weight: bolder;
+}
+
+a {
+    color: red;
 }

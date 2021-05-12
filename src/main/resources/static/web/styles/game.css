@@ -4,10 +4,11 @@ body {
     background-repeat: no-repeat;
     background-size: cover;
     background: url("../img/background.jpg") center fixed;
+    margin-bottom: 200px;
 }
 
 .salvo1 {
-   background: url("../img/water.jpg") !important;
+    background: url("../img/water.jpg") !important;
 }
 
 .salvo2 {
@@ -15,14 +16,13 @@ body {
 }
 
 .hit {
-   background: url("../img/fire.jpg") !important;
+    background: url("../img/fire.jpg") !important;
 }
 
 table {
     margin-top: 50px;
     text-align: center;
 }
-
 
 .tabla {
     margin-top: 100px;
@@ -34,13 +34,39 @@ th {
 }
 
 h1 {
+    font-size: 50px;
+    font-family: "Bangers";
     text-align: center;
-    color: #fff;
+    color: black;
+    height: 8vh;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    font-size: 85px;
+}
+
+.player1 {
+    color: blue;
+}
+
+.player2 {
+    color: red;
+}
+
+
+.paint {
+    background-color: red !important;
+}
+
+.form-select {
+    width: 40%;
 }
 
 h2 {
+    font-family: "Bangers", "cursive";
     text-align: center;
-    color: #fff;
+    color: black;
+    letter-spacing: 1px;
+    margin-top: 45px;
 }
 
 .ship0 {
@@ -48,7 +74,7 @@ h2 {
 }
 
 .ship1 {
-    background-color: #fff !important;
+    background-color: grey !important;
 }
 
 .ship2 {
@@ -63,3 +89,6 @@ h2 {
     background-color: blue !important;
 }
 
+.paint {
+    background-color: blue !important;
+}

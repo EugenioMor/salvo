@@ -114,14 +114,14 @@ var app = new Vue({
                 .done(function () {
                     location.reload();
                 })
-
-            Swal.fire({
-                position: 'center',
-                icon: 'success',
-                title: 'You logged in!',
-                showConfirmButton: false,
-                timer: 500
-            })
+                .fail(
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'success',
+                        title: 'success',
+                        timer: 1000
+                    })
+                )
         },
         //función para registrarse
         signup: function () {

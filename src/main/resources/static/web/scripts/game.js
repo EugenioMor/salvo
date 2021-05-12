@@ -13,7 +13,6 @@ fetch(url)
         app.viewer();
         app.salvos();
         app.match();
-        app.shipJson();
     })
 
 var app = new Vue({
@@ -25,8 +24,35 @@ var app = new Vue({
         rowsTwo: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"],
         mainPlayer: [],
         secondPlayer: [],
-        shipsArray: [],
+        shipsArray: [{
+                type: "Battleship",
+                size: 4,
+                locations: []
+            },
+            {
+                type: "Submarine",
+                size: 3,
+                locations: []
+            },
+            {
+                type: "Destroyer",
+                size: 3,
+                locations: []
+            },
+            {
+                type: "Patrol Boat",
+                size: 2,
+                locations: []
+            },
+            {
+                type: "Carrier",
+                size: 5,
+                locations: []
+            }
+        ],
 
+        orientation: "vertical",
+        shipSelected: {},
     },
     methods: {
         //pinta las naves
@@ -76,7 +102,6 @@ var app = new Vue({
                         if (app.gameView.ships[k].locations.includes(salvosPlayer2[i].locations[j])) {
                             document.getElementById(salvosPlayer2[i].locations[j]).className = "hit";
                             document.getElementById(salvosPlayer2[i].locations[j]).innerHTML = salvosPlayer2[i].turn;
-
                         }
                     }
                 }
@@ -91,49 +116,76 @@ var app = new Vue({
                 })
         },
 
-        shipJson: function () {
-            for (let i = 0; i < app.gameView.ships.length; i++) {
-                app.shipsArray.push({
-                    "type": app.gameView.ships[i].type,
-                    "locations": app.gameView.ships[i].locations
+        shipPost: function () {
+
+            if (app.shipsArray[0].locations.length != 0 && app.shipsArray[1].locations.length != 0 && app.shipsArray[2].locations.length != 0 && app.shipsArray[3].locations.length != 0 && app.shipsArray[4].locations.length != 0) {
+                $.post({
+                        url: "/api/games/players/" + gamePlayerId + "/ships",
+                        data: JSON.stringify(app.shipsArray),
+                        dataType: "text",
+                        contentType: "application/json"
+                    })
+                    .done(function () {
+                        location.reload();
+                    })
+            } else {
+                Swal.fire({
+                    position: 'center',
+                    icon: 'error',
+                    title: 'You have to add 5 ships!',
+                    showConfirmButton: false,
+                    timer: 1000
                 })
             }
         },
 
-        shipPost: function () {
-            $.post({
-                    url: "/api/games/players/" + gamePlayerId + "/ships",
-                    data: JSON.stringify([{
-                            "type": "Destroyer",
-                            "locations": ["B3", "B4", "B5", "B6", "B7"]
-                        },
-                        {
-                            "type": "Destroyer",
-                            "locations": ["C1", "C2", "C3", "C4"]
-                        },
-                        {
-                            "type": "Destroyer",
-                            "locations": ["A9", "B9", "C9"]
-                        },
-                        {
-                            "type": "Destroyer",
-                            "locations": ["D1", "D2", "D3"]
-                        },
-                        {
-                            "type": "Destroyer",
-                            "locations": ["J3", "J4"]
-                        }
+        shipSend: function (row, column) {
+            var ships = []
 
-                    ]),
-                    dataType: "text",
-                    contentType: "application/json"
-                })
-                .done(function (response, status, jqXHR) {
-                    alert("Ship added: " + response), location.reload();
-                })
-                .fail(function (jqXHR, status, httpError) {
-                    alert("Failed to add ship: " + textStatus + " " + httpError);
-                })
+            if (app.orientation == "vertical") {
+                for (j = 0; j < app.shipSelected.size; j++) {
+                    for (i = 0; i < app.rows.length; i++) {
+                        if (app.rows[i] == row) {
+                            ships.push(app.rows[i + j] + column)
+                        }
+                    }
+                }
+
+                if (!app.shipsArray.some(r => ships.some(z => r.locations.includes(z))) && (app.rows.indexOf(row) + app.shipSelected.size) < 11) {
+                    for (h = 0; h < app.shipsArray.length; h++) {
+                        if (app.shipsArray[h].type == app.shipSelected.type) {
+                            for (j = 0; j < app.shipsArray[h].locations.length; j++) {
+
+                                document.getElementById(app.shipsArray[h].locations[j]).className = ""
+                            }
+                            app.shipsArray.find(e => e.type == app.shipSelected.type).locations = []
+                            for (j = 0; j < ships.length; j++) {
+                                app.shipsArray[h].locations.push(ships[j])
+                                document.getElementById(ships[j]).className = "paint";
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (j = 0; j < app.shipSelected.size; j++) {
+                    ships.push(row + (parseInt(column) + j))
+                }
+                if (!app.shipsArray.some(t => ships.some(v => t.locations.includes(v))) && (Number(column) + Number(app.shipSelected.size)) <= 11) {
+                    for (h = 0; h < app.shipsArray.length; h++) {
+                        if (app.shipsArray[h].type == app.shipSelected.type) {
+                            for (j = 0; j < app.shipsArray[h].locations.length; j++) {
+
+                                document.getElementById(app.shipsArray[h].locations[j]).className = ""
+                            }
+                            app.shipsArray.find(e => e.type == app.shipSelected.type).locations = []
+                            for (j = 0; j < ships.length; j++) {
+                                app.shipsArray[h].locations.push(ships[j])
+                                document.getElementById(ships[j]).className = "paint";
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 })
