@@ -19,6 +19,7 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,7 +28,7 @@ import java.util.List;
 
 
 @SpringBootApplication
-public class SalvoApplication  extends SpringBootServletInitializer {
+public class SalvoApplication extends SpringBootServletInitializer {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -59,9 +60,9 @@ public class SalvoApplication  extends SpringBootServletInitializer {
 
 
             Player player1 = new Player("j.bauer@ctu.gov", passwordEncoder.encode("24"));
-            Player player2 = new Player("c.obrian@ctu.gov", passwordEncoder.encode( "42"));
-            Player player3 = new Player("kim_bauer@gmail.com", passwordEncoder.encode( "kb"));
-            Player player4 = new Player("t.almeida@ctu.gov", passwordEncoder.encode( "mole"));
+            Player player2 = new Player("c.obrian@ctu.gov", passwordEncoder.encode("42"));
+            Player player3 = new Player("kim_bauer@gmail.com", passwordEncoder.encode("kb"));
+            Player player4 = new Player("t.almeida@ctu.gov", passwordEncoder.encode("mole"));
 
             playerRepository.save(player1);
             playerRepository.save(player2);
@@ -79,6 +80,7 @@ public class SalvoApplication  extends SpringBootServletInitializer {
 
             gamePlayerRepository.save(gamePlayer1);
             gamePlayerRepository.save(gamePlayer2);
+
             gamePlayerRepository.save(gamePlayer3);
             gamePlayerRepository.save(gamePlayer4);
             gamePlayerRepository.save(gamePlayer5);
@@ -109,11 +111,11 @@ public class SalvoApplication  extends SpringBootServletInitializer {
             shipRepository.save(ship10);
 
 
-            Salvo salvo1 = new Salvo("1", gamePlayer1, List.of("H5", "C5", "F1"));
-            Salvo salvo2 = new Salvo("2", gamePlayer1, List.of("B3", "B5", "B8"));
-            Salvo salvo3 = new Salvo("1", gamePlayer2, List.of("F9", "D1"));
-            Salvo salvo4 = new Salvo("2", gamePlayer2, List.of("E7", "H2", "B9"));
-            Salvo salvo5 = new Salvo("3", gamePlayer3, List.of("H1", "F5", "A3"));
+            Salvo salvo1 = new Salvo(1, gamePlayer1, List.of("H5", "C5", "F1"));
+            Salvo salvo2 = new Salvo(2, gamePlayer1, List.of("B3", "B5", "B8"));
+            Salvo salvo3 = new Salvo(1, gamePlayer2, List.of("F9", "D1", "A7"));
+            Salvo salvo4 = new Salvo(2, gamePlayer2, List.of("E7", "H2", "B9"));
+            Salvo salvo5 = new Salvo(1, gamePlayer3, List.of("H1", "F5", "A3"));
 
             salvoRepository.save(salvo1);
             salvoRepository.save(salvo2);
@@ -153,7 +155,7 @@ class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
     @Override
     public void init(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(inputUserName-> {
+        auth.userDetailsService(inputUserName -> {
             Player player = playerRepository.findByUserName(inputUserName);
             if (player != null) {
                 return new User(player.getUserName(), player.getPassword(),

@@ -114,14 +114,14 @@ var app = new Vue({
                 .done(function () {
                     location.reload();
                 })
-                .fail(
+                .fail(function () {
                     Swal.fire({
                         position: 'center',
-                        icon: 'success',
-                        title: 'success',
+                        icon: 'error',
+                        title: 'You must complete all fields',
                         timer: 1000
                     })
-                )
+                })
         },
         //función para registrarse
         signup: function () {
@@ -139,12 +139,15 @@ var app = new Vue({
                         timer: 500
                     })
                 })
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Cannot create user!',
-                footer: '<a href>Why do I have this issue?</a>'
-            })
+                .fail(function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Cannot create user!',
+                        footer: '<a href>Why do I have this issue?</a>'
+                    })
+                })
+
         },
         //función para cerrar sesión
         logout: function () {
@@ -167,6 +170,20 @@ var app = new Vue({
                 .done(function (data) {
                     location.href = "/web/game.html?gp=" + data.gpid;
                 })
+        },
+
+
+        createdDate: function () {
+            let today = new Date();
+            let day = today.getDate();
+            let month = today.getMonth() + 1;
+            let year = today.getFullYear();
+            let hours = today.getHours();
+            let minutes = today.getMinutes();
+            let seconds = today.getSeconds();
+
+            let formato = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            return formato;
         }
     }
 })

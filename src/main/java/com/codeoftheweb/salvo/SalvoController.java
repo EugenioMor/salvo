@@ -135,6 +135,50 @@ public class SalvoController {
         }
     }
 
+    @PostMapping("games/players/{gamePlayerId}/salvos")
+    public ResponseEntity<Map<String, Object>> addSalvos(Authentication authentication, @PathVariable long gamePlayerId, @RequestBody Salvo salvoes) {
+        if (isGuest(authentication)) {
+            return new ResponseEntity<>(makeMap("error", "You have to logged in."), HttpStatus.UNAUTHORIZED);
+
+        } else {
+            Optional<GamePlayer> gamePlayer = gamePlayerRepository.findById(gamePlayerId);
+            Player player = playerRepository.findByUserName(authentication.getName());
+            Optional<GamePlayer> opponent = gamePlayer.get().getGame().getGamePlayers().stream().filter(x -> x.getId() != gamePlayer.get().getId()).findFirst();
+
+            if (gamePlayer.isEmpty()) {
+                return new ResponseEntity<>(makeMap("error", "Game not found"), HttpStatus.NOT_FOUND);
+
+            }
+            if (gamePlayer.get().getPlayer().getId() != player.getId()) {
+                return new ResponseEntity<>(makeMap("error", "This is not your game"), HttpStatus.UNAUTHORIZED);
+
+            }
+            if (gamePlayer.get().getSalvos().size() + 1 != salvoes.getTurn()) {
+                return new ResponseEntity<>(makeMap("error", "You can't skip turns"), HttpStatus.UNAUTHORIZED);
+
+            }
+            if (gamePlayer.get().getSalvos().size() == salvoes.getTurn()) {
+                return new ResponseEntity<>(makeMap("error", "you can't shoot any more salvoes"), HttpStatus.UNAUTHORIZED);
+
+            }
+            if (salvoes.getLocations().size() != 5) {
+                return new ResponseEntity<>(makeMap("error", "you have to shot 5 salvoes"), HttpStatus.UNAUTHORIZED);
+
+            }
+            if (opponent.isPresent()) {
+                if (gamePlayer.get().getSalvos().size() - opponent.get().getSalvos().size() >= 1) {
+                    return new ResponseEntity<>(makeMap("error", "You can't skip turns, cheater!"), HttpStatus.UNAUTHORIZED);
+                } else {
+                    Salvo salvo = new Salvo(salvoes.getTurn(), gamePlayer.get(), salvoes.getLocations());
+                    salvoRepository.save(salvo);
+                    return new ResponseEntity<>(makeMap("done!", "You have fired the salvoes"), HttpStatus.CREATED);
+                }
+            } else {
+                return new ResponseEntity<>(makeMap("error!", "the opponent doesn't exist"), HttpStatus.NOT_FOUND);
+            }
+        }
+    }
+
     @GetMapping("/games")
     public Map<String, Object> getGames(Authentication authentication) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
@@ -190,11 +234,12 @@ public class SalvoController {
 
     public Map<String, Object> makeSalvoDTO(Salvo salvo) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
-        dto.put("turn", salvo.getTurn());
         dto.put("player", salvo.getGamePlayer().getPlayer().getId());
+        dto.put("turn", salvo.getTurn());
         dto.put("locations", salvo.getLocations());
         return dto;
     }
+
 
     public Map<String, Object> makeGameViewDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
@@ -205,6 +250,7 @@ public class SalvoController {
         dto.put("salvos", gamePlayer.getGame().getGamePlayers().stream().flatMap((a) -> a.getSalvos().stream().map(this::makeSalvoDTO)));
         return dto;
     }
+
 
     // private methods
     private boolean isGuest(Authentication authentication) {

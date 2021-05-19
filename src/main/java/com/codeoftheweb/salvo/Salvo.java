@@ -4,6 +4,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 public class Salvo {
@@ -17,7 +18,7 @@ public class Salvo {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    private String turn;
+    private int turn;
 
     @ElementCollection
     @Column(name = "locations")
@@ -26,12 +27,12 @@ public class Salvo {
     public Salvo() {
     }
 
-    public Salvo(String turn, GamePlayer gamePlayer, List<String> locations) {
+    public Salvo(int turn, GamePlayer gamePlayer, List<String> locations) {
         this.turn = turn;
         this.gamePlayer = gamePlayer;
         this.locations = locations;
-
     }
+
 
     public long getId() {
         return id;
@@ -49,11 +50,11 @@ public class Salvo {
         this.gamePlayer = gamePlayer;
     }
 
-    public String getTurn() {
+    public int getTurn() {
         return turn;
     }
 
-    public void setTurn(String turn) {
+    public void setTurn(int turn) {
         this.turn = turn;
     }
 
@@ -64,4 +65,5 @@ public class Salvo {
     public void setLocations(List<String> locations) {
         this.locations = locations;
     }
+
 }

@@ -3,20 +3,19 @@ body {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-    background: url("../img/background.jpg") center fixed;
+    background: url("../img/game3.jpg") center fixed;
     margin-bottom: 200px;
 }
 
-.salvo1 {
-    background: url("../img/water.jpg") !important;
-}
-
+.salvo1,
 .salvo2 {
-    background-color: purple !important;
+    background: url("../img/splash.jpeg") !important;
+    color: black;
 }
 
 .hit {
     background: url("../img/fire.jpg") !important;
+    color: black;
 }
 
 table {
@@ -61,6 +60,14 @@ h1 {
     width: 40%;
 }
 
+.btn-add-ships {
+    margin-left: 0px;
+}
+
+.shot-btn {
+    margin-left: 47%;
+}
+
 h2 {
     font-family: "Bangers", "cursive";
     text-align: center;
@@ -90,5 +97,5 @@ h2 {
 }
 
 .paint {
-    background-color: blue !important;
+    background-color: yellow !important;
 }

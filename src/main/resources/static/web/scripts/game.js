@@ -50,22 +50,26 @@ var app = new Vue({
                 locations: []
             }
         ],
-
         orientation: "vertical",
         shipSelected: {},
+        salvoes: {
+            turn: 0,
+            locations: []
+        },
+        locationSalvos: [],
     },
     methods: {
         //pinta las naves
         paintShips: function () {
-            for (i = 0; i < app.gameView.ships.length; i++) {
-                for (j = 0; j < app.gameView.ships[i].locations.length; j++) {
+            for (let i = 0; i < app.gameView.ships.length; i++) {
+                for (let j = 0; j < app.gameView.ships[i].locations.length; j++) {
                     document.getElementById(app.gameView.ships[i].locations[j]).className = "ship" + i;
                 }
             }
         },
 
         viewer: function () {
-            for (var i = 0; i < app.gameView.gamePlayers.length; i++) {
+            for (let i = 0; i < app.gameView.gamePlayers.length; i++) {
                 if (app.gameView.gamePlayers[i].id == gamePlayerId) {
                     app.mainPlayer = app.gameView.gamePlayers[i].player;
                 } else {
@@ -78,15 +82,16 @@ var app = new Vue({
             var salvosPlayer1 = app.gameView.salvos.filter(element => element.player == app.mainPlayer.id)
             var salvosPlayer2 = app.gameView.salvos.filter(element => element.player != app.mainPlayer.id)
 
-            for (i = 0; i < salvosPlayer1.length; i++) {
-                for (j = 0; j < salvosPlayer1[i].locations.length; j++) {
+            for (let i = 0; i < salvosPlayer1.length; i++) {
+
+                for (let j = 0; j < salvosPlayer1[i].locations.length; j++) {
                     document.getElementById(salvosPlayer1[i].locations[j].toLowerCase()).className = "salvo1";
                     document.getElementById(salvosPlayer1[i].locations[j].toLowerCase()).innerHTML = salvosPlayer1[i].turn;
                 }
             }
 
-            for (i = 0; i < salvosPlayer2.length; i++) {
-                for (j = 0; j < salvosPlayer2[i].locations.length; j++) {
+            for (let i = 0; i < salvosPlayer2.length; i++) {
+                for (let j = 0; j < salvosPlayer2[i].locations.length; j++) {
                     document.getElementById(salvosPlayer2[i].locations[j]).className = "salvo2";
                     document.getElementById(salvosPlayer2[i].locations[j]).innerHTML = salvosPlayer2[i].turn;
                 }
@@ -128,14 +133,16 @@ var app = new Vue({
                     .done(function () {
                         location.reload();
                     })
+
             } else {
                 Swal.fire({
                     position: 'center',
                     icon: 'error',
                     title: 'You have to add 5 ships!',
                     showConfirmButton: false,
-                    timer: 1000
+                    timer: 2000
                 })
+
             }
         },
 
@@ -143,8 +150,8 @@ var app = new Vue({
             var ships = []
 
             if (app.orientation == "vertical") {
-                for (j = 0; j < app.shipSelected.size; j++) {
-                    for (i = 0; i < app.rows.length; i++) {
+                for (let j = 0; j < app.shipSelected.size; j++) {
+                    for (let i = 0; i < app.rows.length; i++) {
                         if (app.rows[i] == row) {
                             ships.push(app.rows[i + j] + column)
                         }
@@ -152,14 +159,14 @@ var app = new Vue({
                 }
 
                 if (!app.shipsArray.some(r => ships.some(z => r.locations.includes(z))) && (app.rows.indexOf(row) + app.shipSelected.size) < 11) {
-                    for (h = 0; h < app.shipsArray.length; h++) {
+                    for (let h = 0; h < app.shipsArray.length; h++) {
                         if (app.shipsArray[h].type == app.shipSelected.type) {
-                            for (j = 0; j < app.shipsArray[h].locations.length; j++) {
+                            for (let j = 0; j < app.shipsArray[h].locations.length; j++) {
 
                                 document.getElementById(app.shipsArray[h].locations[j]).className = ""
                             }
                             app.shipsArray.find(e => e.type == app.shipSelected.type).locations = []
-                            for (j = 0; j < ships.length; j++) {
+                            for (let j = 0; j < ships.length; j++) {
                                 app.shipsArray[h].locations.push(ships[j])
                                 document.getElementById(ships[j]).className = "paint";
                             }
@@ -167,18 +174,18 @@ var app = new Vue({
                     }
                 }
             } else {
-                for (j = 0; j < app.shipSelected.size; j++) {
+                for (let j = 0; j < app.shipSelected.size; j++) {
                     ships.push(row + (parseInt(column) + j))
                 }
                 if (!app.shipsArray.some(t => ships.some(v => t.locations.includes(v))) && (Number(column) + Number(app.shipSelected.size)) <= 11) {
-                    for (h = 0; h < app.shipsArray.length; h++) {
+                    for (let h = 0; h < app.shipsArray.length; h++) {
                         if (app.shipsArray[h].type == app.shipSelected.type) {
-                            for (j = 0; j < app.shipsArray[h].locations.length; j++) {
+                            for (let j = 0; j < app.shipsArray[h].locations.length; j++) {
 
                                 document.getElementById(app.shipsArray[h].locations[j]).className = ""
                             }
                             app.shipsArray.find(e => e.type == app.shipSelected.type).locations = []
-                            for (j = 0; j < ships.length; j++) {
+                            for (let j = 0; j < ships.length; j++) {
                                 app.shipsArray[h].locations.push(ships[j])
                                 document.getElementById(ships[j]).className = "paint";
                             }
@@ -186,6 +193,49 @@ var app = new Vue({
                     }
                 }
             }
-        }
+        },
+
+        salvoPost: function () {
+
+            $.post({
+                    url: "/api/games/players/" + gamePlayerId + "/salvos",
+                    data: JSON.stringify(app.salvoes),
+                    dataType: "text",
+                    contentType: "application/json"
+                })
+                .done(function () {
+                    location.reload();
+                })
+                .fail(function (response) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: JSON.parse(response.responseText).error,
+                        showConfirmButton: false,
+                        timer: 2000
+                    })
+                })
+        },
+
+        salvoSend: function (rowTwo, column) {
+            var location = rowTwo + column
+            var turn = app.gameView.salvos.filter(el => el.player == app.mainPlayer.id).length + 1
+
+            if (app.locationSalvos.length <= 4 && !app.gameView.salvos.some(z => z.locations.includes(app.salvoes.locations)) && !app.locationSalvos.includes(location)) {
+
+                app.salvoes.locations.push(location.toUpperCase())
+                app.salvoes.turn = turn
+                app.locationSalvos.push(location)
+                document.getElementById(location).className = "paint"
+
+            } else {
+                if (app.locationSalvos.length <= 5 && app.locationSalvos.includes(location)) {
+                    app.salvoes.locations.splice(app.salvoes.locations.indexOf(location), 1)
+                    app.locationSalvos.splice(app.locationSalvos.indexOf(location), 1)
+                    document.getElementById(location).className = ""
+                }
+            }
+        },
+
     }
 })
