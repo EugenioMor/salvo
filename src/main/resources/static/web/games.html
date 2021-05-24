@@ -15,7 +15,7 @@
         <div id="app" class="container">
             <h1>Battleship</h1>
             <div class="row">
-                <div class="col-10 form" v-if="currentUser == null">
+                <div class="col-md-12 lg-6 form" v-if="currentUser == null">
                     <form class="form1">
                         <div class="form-group">
                             <label for="exampleInputEmail1">Email address</label>
@@ -38,7 +38,7 @@
                     </form>
                 </div>
 
-                <div class="col" v-else>
+                <div class="col-sm-12 col-md-6" v-else>
                     <div class="logout-create">
                         <form id="logout-form" onsubmit="return false">
                             <button type="button" class="btn btn-primary" v-on:click="logout()">
@@ -53,27 +53,28 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-5" v-if="currentUser != null">
+                <div class="col-sm-12 col-md-6 container-games" v-if="currentUser != null">
+                    <h2 class="games-title">All Games</h2>
                     <ol class="ol-list">
                         <li v-for="game in games">
-                            <ul>
-                                {{" Date: " + game.date}}
+                            <div>{{" Date: " + game.date}} </div>
+                            <ul><br>
                                 <li v-for="gamePlayer in game.GamePlayers">
                                     <span v-if="currentUser != null && currentUser.id == gamePlayer.player.id"><a
                                             v-bind:href="'game.html?gp=' + gamePlayer.id">{{gamePlayer.player.email}}</a>
                                     </span>
-                                    <span v-else>{{gamePlayer.player.email}}</span><br><br>
+                                    <span v-else>{{gamePlayer.player.email}}</span>
                                     <button
                                         v-if="currentUser != null && currentUser.id != gamePlayer.player.id && game.GamePlayers.length == 1 "
                                         type="button" class="btn btn-primary" v-on:click="joinGame(game.id)">
                                         Join Game
                                     </button>
-                                </li>
+                                </li><br>
                             </ul>
                         </li>
                     </ol>
                 </div>
-                <div class="col-6 table-score" v-if="currentUser != null">
+                <div class="col-sm-12 col-md-6 table-score" v-if="currentUser != null">
                     <table class="table table-bordered table-dark">
                         <thead>
                             <th>Username</th>

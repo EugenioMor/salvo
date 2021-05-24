@@ -13,6 +13,10 @@ fetch(url)
         app.viewer();
         app.salvos();
         app.match();
+        app.hitsToOpponent();
+        app.sunksToOpponent();
+        app.hitsOnMe();
+        app.sunksOnMe();
     })
 
 var app = new Vue({
@@ -101,12 +105,12 @@ var app = new Vue({
         match: function () {
             var salvosPlayer2 = app.gameView.salvos.filter(element => element.player == app.secondPlayer.id)
 
-            for (i = 0; i < salvosPlayer2.length; i++) {
-                for (j = 0; j < salvosPlayer2[i].locations.length; j++) {
-                    for (k = 0; k < app.gameView.ships.length; k++) {
+            for (let i = 0; i < salvosPlayer2.length; i++) {
+                for (let j = 0; j < salvosPlayer2[i].locations.length; j++) {
+                    for (let k = 0; k < app.gameView.ships.length; k++) {
                         if (app.gameView.ships[k].locations.includes(salvosPlayer2[i].locations[j])) {
-                            document.getElementById(salvosPlayer2[i].locations[j]).className = "hit";
-                            document.getElementById(salvosPlayer2[i].locations[j]).innerHTML = salvosPlayer2[i].turn;
+                            document.getElementById(salvosPlayer2[i].locations[j].toUpperCase()).className = "hit";
+                            document.getElementById(salvosPlayer2[i].locations[j].toUpperCase()).innerHTML = salvosPlayer2[i].turn;
                         }
                     }
                 }
@@ -217,25 +221,63 @@ var app = new Vue({
                 })
         },
 
-        salvoSend: function (rowTwo, column) {
-            var location = rowTwo + column
+        salvoSend: function (row, column) {
+
             var turn = app.gameView.salvos.filter(el => el.player == app.mainPlayer.id).length + 1
+            var location = row.toUpperCase() + column
+            var salvosId = app.gameView.salvos.filter(el => el.player == app.mainPlayer.id)
 
-            if (app.locationSalvos.length <= 4 && !app.gameView.salvos.some(z => z.locations.includes(app.salvoes.locations)) && !app.locationSalvos.includes(location)) {
+            if (!app.locationSalvos.includes(location) && app.salvoes.locations.length <= 4 && !salvosId.some(x => x.locations.includes(location))) {
 
-                app.salvoes.locations.push(location.toUpperCase())
+                document.getElementById(location.toLowerCase()).className = "paint"
+                app.salvoes.locations.push(location)
                 app.salvoes.turn = turn
                 app.locationSalvos.push(location)
-                document.getElementById(location).className = "paint"
 
             } else {
-                if (app.locationSalvos.length <= 5 && app.locationSalvos.includes(location)) {
+                if (app.salvoes.locations.length <= 5 && app.locationSalvos.includes(location)) {
+                    document.getElementById(location.toLowerCase()).className = ""
                     app.salvoes.locations.splice(app.salvoes.locations.indexOf(location), 1)
                     app.locationSalvos.splice(app.locationSalvos.indexOf(location), 1)
-                    document.getElementById(location).className = ""
                 }
             }
         },
 
+        hitsToOpponent: function () {
+            for (let i = 0; i < app.gameView.hits.length; i++) {
+                for (let j = 0; j < app.gameView.hits[i].damagedLocations.length; j++) {
+                    document.getElementById(app.gameView.hits[i].damagedLocations[j].toLowerCase()).className = "hit";
+                }
+            }
+        },
+
+        sunksToOpponent: function () {
+            for (let i = 0; i < app.gameView.sunks.length; i++) {
+                for (let j = 0; j < app.gameView.sunks[i].sunkenShips.length; j++) {
+                    for (let k = 0; k < app.gameView.sunks[i].sunkenShips[j].locations.length; k++) {
+                        document.getElementById(app.gameView.sunks[i].sunkenShips[j].locations[k].toLowerCase()).className = "sunk";
+                    }
+                }
+            }
+        },
+
+
+        hitsOnMe: function () {
+            for (let i = 0; i < app.gameView.opponentHits.length; i++) {
+                for (let j = 0; j < app.gameView.opponentHits[i].damagedLocations.length; j++) {
+                    document.getElementById(app.gameView.opponentHits[i].damagedLocations[j]).className = "hit";
+                }
+            }
+        },
+
+        sunksOnMe: function () {
+            for (let i = 0; i < app.gameView.opponentSunks.length; i++) {
+                for (let j = 0; j < app.gameView.opponentSunks[i].sunkenShips.length; j++) {
+                    for (let k = 0; k < app.gameView.opponentSunks[i].sunkenShips[j].locations.length; k++) {
+                        document.getElementById(app.gameView.opponentSunks[i].sunkenShips[j].locations[k]).className = "sunk";
+                    }
+                }
+            }
+        },
     }
 })

@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -22,18 +23,19 @@ public class GamePlayer {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    @OneToMany (fetch = FetchType.EAGER, mappedBy = "gamePlayer", cascade = CascadeType.ALL)
-    private Set <Ship> ships = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "gamePlayer", cascade = CascadeType.ALL)
+    private Set<Ship> ships = new HashSet<>();
 
-    @OneToMany (fetch = FetchType.EAGER, mappedBy = "gamePlayer")
-    private Set <Salvo> salvos = new HashSet<>();
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "gamePlayer")
+    private Set<Salvo> salvos = new HashSet<>();
 
 
     private LocalDateTime date;
 
-    public GamePlayer() {}
+    public GamePlayer() {
+    }
 
-    public GamePlayer (LocalDateTime date, Game game, Player player) {
+    public GamePlayer(LocalDateTime date, Game game, Player player) {
         this.date = date;
         this.player = player;
         this.game = game;
@@ -93,12 +95,11 @@ public class GamePlayer {
         this.date = date;
     }
 
-    public Set<Ship> getShips() {return ships;}
+    public Set<Ship> getShips() {
+        return ships;
+    }
 
     public void setShips(Set<Ship> ships) {
         this.ships = ships;
     }
-
-
 }
-

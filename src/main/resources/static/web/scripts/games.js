@@ -23,8 +23,8 @@ var app = new Vue({
         getPlayers: function () {
             var mailsArray = [];
 
-            for (var i = 0; i < app.games.length; i++) {
-                for (var j = 0; j < app.games[i].GamePlayers.length; j++) {
+            for (let i = 0; i < app.games.length; i++) {
+                for (let j = 0; j < app.games[i].GamePlayers.length; j++) {
                     if (!mailsArray.includes(app.games[i].GamePlayers[j].player.email)) {
                         mailsArray.push(app.games[i].GamePlayers[j].player.email)
                     }
@@ -36,8 +36,8 @@ var app = new Vue({
         totalScore: function (email) {
             var score = 0;
 
-            for (var i = 0; i < app.games.length; i++) {
-                for (var j = 0; j < app.games[i].GamePlayers.length; j++) {
+            for (let i = 0; i < app.games.length; i++) {
+                for (let j = 0; j < app.games[i].GamePlayers.length; j++) {
                     if (email == app.games[i].GamePlayers[j].player.email) {
                         score += app.games[i].GamePlayers[j].score
                     }
@@ -49,8 +49,8 @@ var app = new Vue({
         countWins: function (email) {
             var wins = 0
 
-            for (var i = 0; i < app.games.length; i++) {
-                for (var j = 0; j < app.games[i].GamePlayers.length; j++) {
+            for (let i = 0; i < app.games.length; i++) {
+                for (let j = 0; j < app.games[i].GamePlayers.length; j++) {
                     if (email == app.games[i].GamePlayers[j].player.email) {
                         wins += app.games[i].GamePlayers[j].score == 1.0
                     }
@@ -62,8 +62,8 @@ var app = new Vue({
         countLosses: function (email) {
             var losses = 0
 
-            for (var i = 0; i < app.games.length; i++) {
-                for (var j = 0; j < app.games[i].GamePlayers.length; j++) {
+            for (let i = 0; i < app.games.length; i++) {
+                for (let j = 0; j < app.games[i].GamePlayers.length; j++) {
                     if (email == app.games[i].GamePlayers[j].player.email) {
                         losses += app.games[i].GamePlayers[j].score == 0
                     }
@@ -75,8 +75,8 @@ var app = new Vue({
         countTies: function (email) {
             var ties = 0
 
-            for (var i = 0; i < app.games.length; i++) {
-                for (var j = 0; j < app.games[i].GamePlayers.length; j++) {
+            for (let i = 0; i < app.games.length; i++) {
+                for (let j = 0; j < app.games[i].GamePlayers.length; j++) {
                     if (email == app.games[i].GamePlayers[j].player.email) {
                         ties += app.games[i].GamePlayers[j].score == 0.5
                     }

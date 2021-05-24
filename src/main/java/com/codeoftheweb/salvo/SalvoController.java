@@ -240,7 +240,6 @@ public class SalvoController {
         return dto;
     }
 
-
     public Map<String, Object> makeGameViewDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
         dto.put("id", gamePlayer.getGame().getId());
@@ -248,9 +247,26 @@ public class SalvoController {
         dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers().stream().map(this::makeGamePlayerDTO).collect(toList()));
         dto.put("ships", gamePlayer.getShips().stream().map(this::makeShipDTO).collect(toList()));
         dto.put("salvos", gamePlayer.getGame().getGamePlayers().stream().flatMap((a) -> a.getSalvos().stream().map(this::makeSalvoDTO)));
+        dto.put("hits", gamePlayer.getSalvos().stream().map(this::makeHitsDTO));
+        dto.put("sunks", gamePlayer.getSalvos().stream().map(this::makeSunksDTO));
+        dto.put("opponentHits", gamePlayer.getGame().getGamePlayers().stream().filter(x -> x.getId() != gamePlayer.getId()).flatMap((a) -> a.getSalvos().stream().map(this::makeHitsDTO)));
+        dto.put("opponentSunks", gamePlayer.getGame().getGamePlayers().stream().filter(x -> x.getId() != gamePlayer.getId()).flatMap((a) -> a.getSalvos().stream().map(this::makeSunksDTO)));
         return dto;
     }
 
+    public Map<String, Object> makeHitsDTO(Salvo salvo) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", salvo.getTurn());
+        dto.put("damagedLocations", salvo.getHits());
+        return dto;
+    }
+
+    public Map<String, Object> makeSunksDTO(Salvo salvo) {
+        Map<String, Object> dto = new LinkedHashMap<>();
+        dto.put("turn", salvo.getTurn());
+        dto.put("sunkenShips", salvo.getSunks().stream().map(this::makeShipDTO));
+        return dto;
+    }
 
     // private methods
     private boolean isGuest(Authentication authentication) {

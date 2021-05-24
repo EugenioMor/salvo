@@ -14,7 +14,12 @@ body {
 }
 
 .hit {
-    background: url("../img/fire.jpg") !important;
+    background: url("../img/fire.gif") !important;
+    color: black;
+}
+
+.sunk {
+    background: url("../img/sunk.png");
     color: black;
 }
 
@@ -25,10 +30,12 @@ table {
 
 .tabla {
     margin-top: 100px;
+    text-align: center;
 }
 
-th {
-    background-color: #fff !important;
+th,
+td {
+    background-color: rgb(100, 97, 97) !important;
     color: black;
 }
 
@@ -81,7 +88,7 @@ h2 {
 }
 
 .ship1 {
-    background-color: grey !important;
+    background-color: violet !important;
 }
 
 .ship2 {

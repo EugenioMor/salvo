@@ -137,7 +137,6 @@ public class SalvoApplication extends SpringBootServletInitializer {
             scoreRepository.save(score4);
             scoreRepository.save(score5);
             scoreRepository.save(score6);
-
         };
     }
 }
