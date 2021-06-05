@@ -29,6 +29,9 @@ public class SalvoController {
     private SalvoRepository salvoRepository;
 
     @Autowired
+    private ScoreRepository scoreRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/game_view/{gamePlayerId}")
@@ -147,7 +150,6 @@ public class SalvoController {
 
             if (gamePlayer.isEmpty()) {
                 return new ResponseEntity<>(makeMap("error", "Game not found"), HttpStatus.NOT_FOUND);
-
             }
             if (gamePlayer.get().getPlayer().getId() != player.getId()) {
                 return new ResponseEntity<>(makeMap("error", "This is not your game"), HttpStatus.UNAUTHORIZED);
@@ -161,18 +163,34 @@ public class SalvoController {
                 return new ResponseEntity<>(makeMap("error", "you can't shoot any more salvoes"), HttpStatus.UNAUTHORIZED);
 
             }
+
             if (salvoes.getLocations().size() != 5) {
                 return new ResponseEntity<>(makeMap("error", "you have to shot 5 salvoes"), HttpStatus.UNAUTHORIZED);
+
+            }
+
+            if (gamePlayer.get().gameStatus() == GameStatus.TIE || gamePlayer.get().gameStatus() == GameStatus.LOSE || gamePlayer.get().gameStatus() == GameStatus.WIN) {
+                return new ResponseEntity<>(makeMap("error", "The game has finished"), HttpStatus.FORBIDDEN);
 
             }
             if (opponent.isPresent()) {
                 if (gamePlayer.get().getSalvos().size() - opponent.get().getSalvos().size() >= 1) {
                     return new ResponseEntity<>(makeMap("error", "You can't skip turns, cheater!"), HttpStatus.UNAUTHORIZED);
-                } else {
-                    Salvo salvo = new Salvo(salvoes.getTurn(), gamePlayer.get(), salvoes.getLocations());
-                    salvoRepository.save(salvo);
-                    return new ResponseEntity<>(makeMap("done!", "You have fired the salvoes"), HttpStatus.CREATED);
                 }
+                Salvo salvo = new Salvo(salvoes.getTurn(), gamePlayer.get(), salvoes.getLocations());
+                salvoRepository.save(salvo);
+                gamePlayer.get().getSalvos().add(salvo);
+                if (gamePlayer.get().gameStatus() == GameStatus.TIE) {
+                    scoreRepository.save(new Score(LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getPlayer(), 0.5));
+                    scoreRepository.save(new Score(LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getOpponent().get().getPlayer(), 0.5));
+                } else if (gamePlayer.get().gameStatus() == GameStatus.WIN) {
+                    scoreRepository.save(new Score(LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getPlayer(), 1.0));
+                    scoreRepository.save(new Score(LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getOpponent().get().getPlayer(), 0.0));
+                } else if (gamePlayer.get().gameStatus() == GameStatus.LOSE) {
+                    scoreRepository.save(new Score(LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getOpponent().get().getPlayer(), 1.0));
+                    scoreRepository.save(new Score(LocalDateTime.now(), gamePlayer.get().getGame(), gamePlayer.get().getPlayer(), 0.0));
+                }
+                return new ResponseEntity<>(makeMap("done!", "You have fired the salvoes"), HttpStatus.CREATED);
             } else {
                 return new ResponseEntity<>(makeMap("error!", "the opponent doesn't exist"), HttpStatus.NOT_FOUND);
             }
@@ -242,6 +260,7 @@ public class SalvoController {
 
     public Map<String, Object> makeGameViewDTO(GamePlayer gamePlayer) {
         Map<String, Object> dto = new LinkedHashMap<String, Object>();
+        dto.put("gameState", gamePlayer.gameStatus());
         dto.put("id", gamePlayer.getGame().getId());
         dto.put("created", gamePlayer.getGame().getDate());
         dto.put("gamePlayers", gamePlayer.getGame().getGamePlayers().stream().map(this::makeGamePlayerDTO).collect(toList()));
@@ -249,8 +268,10 @@ public class SalvoController {
         dto.put("salvos", gamePlayer.getGame().getGamePlayers().stream().flatMap((a) -> a.getSalvos().stream().map(this::makeSalvoDTO)));
         dto.put("hits", gamePlayer.getSalvos().stream().map(this::makeHitsDTO));
         dto.put("sunks", gamePlayer.getSalvos().stream().map(this::makeSunksDTO));
-        dto.put("opponentHits", gamePlayer.getGame().getGamePlayers().stream().filter(x -> x.getId() != gamePlayer.getId()).flatMap((a) -> a.getSalvos().stream().map(this::makeHitsDTO)));
-        dto.put("opponentSunks", gamePlayer.getGame().getGamePlayers().stream().filter(x -> x.getId() != gamePlayer.getId()).flatMap((a) -> a.getSalvos().stream().map(this::makeSunksDTO)));
+        if (gamePlayer.getOpponent().isPresent()) {
+            dto.put("opponentHits", gamePlayer.getOpponent().get().getSalvos().stream().map(this::makeHitsDTO));
+            dto.put("opponentSunks", gamePlayer.getOpponent().get().getSalvos().stream().map(this::makeSunksDTO));
+        }
         return dto;
     }
 
@@ -279,6 +300,7 @@ public class SalvoController {
         return map;
     }
 }
+
 
 
 

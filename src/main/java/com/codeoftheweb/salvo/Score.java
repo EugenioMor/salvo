@@ -24,7 +24,7 @@ public class Score {
 
     public Score(){};
 
-    public Score (double score, LocalDateTime finishDate, Game game, Player player){
+    public Score (LocalDateTime finishDate, Game game, Player player, double score){
         this.score = score;
         this.finishDate = finishDate;
         this.game = game;

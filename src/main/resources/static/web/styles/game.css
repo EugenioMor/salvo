@@ -10,7 +10,6 @@ body {
 .salvo1,
 .salvo2 {
     background: url("../img/splash.jpeg") !important;
-    color: black;
 }
 
 .hit {
@@ -37,6 +36,9 @@ th,
 td {
     background-color: rgb(100, 97, 97) !important;
     color: black;
+    opacity: 80%;
+
+
 }
 
 h1 {
@@ -104,5 +106,5 @@ h2 {
 }
 
 .paint {
-    background-color: yellow !important;
+    background-color: red !important;
 }

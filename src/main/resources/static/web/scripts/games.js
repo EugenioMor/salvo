@@ -172,18 +172,16 @@ var app = new Vue({
                 })
         },
 
+        // createdDate: function () {
+        //     let today = new Date();
+        //     let day = today.getDate();
+        //     let month = today.getMonth() + 1;
+        //     let year = today.getFullYear();
+        //     let hours = today.getHours();
+        //     let minutes = today.getMinutes();
+        //     let seconds = today.getSeconds();
+        //     app.gameView.created = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+        // },
 
-        createdDate: function () {
-            let today = new Date();
-            let day = today.getDate();
-            let month = today.getMonth() + 1;
-            let year = today.getFullYear();
-            let hours = today.getHours();
-            let minutes = today.getMinutes();
-            let seconds = today.getSeconds();
-
-            let formato = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-            return formato;
-        }
     }
 })

@@ -1,24 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
 const gamePlayerId = urlParams.get('gp');
 
-var url = "http://localhost:8080/api/game_view/" + gamePlayerId;
-
-fetch(url)
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (data) {
-        app.gameView = data;
-        app.paintShips();
-        app.viewer();
-        app.salvos();
-        app.match();
-        app.hitsToOpponent();
-        app.sunksToOpponent();
-        app.hitsOnMe();
-        app.sunksOnMe();
-    })
-
 var app = new Vue({
     el: "#app",
     data: {
@@ -61,8 +43,11 @@ var app = new Vue({
             locations: []
         },
         locationSalvos: [],
+        statusGame: "",
+        created: null,
     },
     methods: {
+
         //pinta las naves
         paintShips: function () {
             for (let i = 0; i < app.gameView.ships.length; i++) {
@@ -243,26 +228,12 @@ var app = new Vue({
             }
         },
 
-        hitsToOpponent: function () {
+        hits: function () {
             for (let i = 0; i < app.gameView.hits.length; i++) {
                 for (let j = 0; j < app.gameView.hits[i].damagedLocations.length; j++) {
                     document.getElementById(app.gameView.hits[i].damagedLocations[j].toLowerCase()).className = "hit";
                 }
             }
-        },
-
-        sunksToOpponent: function () {
-            for (let i = 0; i < app.gameView.sunks.length; i++) {
-                for (let j = 0; j < app.gameView.sunks[i].sunkenShips.length; j++) {
-                    for (let k = 0; k < app.gameView.sunks[i].sunkenShips[j].locations.length; k++) {
-                        document.getElementById(app.gameView.sunks[i].sunkenShips[j].locations[k].toLowerCase()).className = "sunk";
-                    }
-                }
-            }
-        },
-
-
-        hitsOnMe: function () {
             for (let i = 0; i < app.gameView.opponentHits.length; i++) {
                 for (let j = 0; j < app.gameView.opponentHits[i].damagedLocations.length; j++) {
                     document.getElementById(app.gameView.opponentHits[i].damagedLocations[j]).className = "hit";
@@ -270,7 +241,14 @@ var app = new Vue({
             }
         },
 
-        sunksOnMe: function () {
+        sunks: function () {
+            for (let i = 0; i < app.gameView.sunks.length; i++) {
+                for (let j = 0; j < app.gameView.sunks[i].sunkenShips.length; j++) {
+                    for (let k = 0; k < app.gameView.sunks[i].sunkenShips[j].locations.length; k++) {
+                        document.getElementById(app.gameView.sunks[i].sunkenShips[j].locations[k].toLowerCase()).className = "sunk";
+                    }
+                }
+            }
             for (let i = 0; i < app.gameView.opponentSunks.length; i++) {
                 for (let j = 0; j < app.gameView.opponentSunks[i].sunkenShips.length; j++) {
                     for (let k = 0; k < app.gameView.opponentSunks[i].sunkenShips[j].locations.length; k++) {
@@ -279,5 +257,54 @@ var app = new Vue({
                 }
             }
         },
+
+        statusChange: function () {
+            let status = {
+                PLACE_SHIPS: "Place your ships",
+                WAIT_OPPONENT: "Waiting for the opponent...",
+                WAIT_OPPONENT_SHIPS: "Waiting for the opponent to place their ships...",
+                WAIT_OPPONENT_SALVOS: "Waiting for the opponent's salvoes",
+                PLACE_SALVOS: "Place your salvoes",
+                TIE: "Has been a draw!",
+                WIN: "You win!",
+                LOSE: "You lost!"
+            }
+            app.statusGame = status[app.gameView.gameState]
+
+        },
+
+        reloadStatus: function () {
+            if (this.gameView.gameState == "WAIT_OPPONENT", "WAIT_OPPONENT_SHIPS", "WAIT_OPPONENT_SALVOS") {
+                console.log("wait opponent")
+                setTimeout(this.getData, 2000)
+            }
+        },
+
+        getData: function () {
+            var url = "http://localhost:8080/api/game_view/" + gamePlayerId;
+
+            fetch(url)
+                .then(function (response) {
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data)
+                    this.gameView = data;
+                    if (this.gameView != null) {
+                        this.paintShips();
+                        this.viewer();
+                        this.salvos();
+                        this.match();
+                        this.hits();
+                        this.sunks();
+                        this.statusChange();
+                        this.reloadStatus();
+                    }
+                })
+        },
+    },
+
+    mounted: function () {
+        this.getData();
     }
 })

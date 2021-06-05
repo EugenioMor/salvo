@@ -28,6 +28,10 @@
                         <h2> Player 2: <span class="player2">{{secondPlayer.email}}</span></h2>
                     </div>
                 </div>
+                <br>
+                <div>
+                    <h3 class="text-status" v-show="gameView.gameState">{{statusGame}}</h3>
+                </div>
                 <div class="row">
                     <div class="col-sm-12 col-md-6">
                         <table class="table table-bordered table-dark">
@@ -93,7 +97,7 @@
                         </select>
                     </div>
                 </div>
-                <div class="col shot-btn" v-else>
+                <div class="col shot-btn" v-show="gameView.gameState == 'PLACE_SALVOS'">
                     <button type="button" class="btn btn-primary" v-on:click="salvoPost()">Shoot!</button>
                 </div>
             </div>

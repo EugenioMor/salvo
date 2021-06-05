@@ -1,12 +1,14 @@
 package com.codeoftheweb.salvo;
 
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 @Entity
 public class GamePlayer {
@@ -68,7 +70,7 @@ public class GamePlayer {
     }
 
     public void setId(long id) {
-        id = id;
+        this.id = id;
     }
 
     public Player getPlayer() {
@@ -102,4 +104,47 @@ public class GamePlayer {
     public void setShips(Set<Ship> ships) {
         this.ships = ships;
     }
+
+    public Optional<GamePlayer> getOpponent() {
+        Optional<GamePlayer> opponent = getGame().getGamePlayers().stream().filter(x -> x.getId() != getId()).findFirst();
+        return opponent;
+    }
+
+    public GameStatus gameStatus() {
+        if (this.getShips().isEmpty()) {
+            return GameStatus.PLACE_SHIPS;
+        } else {
+            if (this.getOpponent().isPresent()) {
+                if (this.getOpponent().get().getShips().isEmpty()) {
+                    return GameStatus.WAIT_OPPONENT_SHIPS;
+                } else {
+                    if (this.getSalvos().stream().noneMatch(em -> em.getTurn() == this.getSalvos().size())) {
+                        return GameStatus.PLACE_SALVOS;
+                    } else {
+                        if (this.getOpponent().get().getSalvos().stream().noneMatch(em -> em.getTurn() == this.getSalvos().size())) {
+                            return GameStatus.WAIT_OPPONENT_SALVOS;
+                        } else if (this.getSalvos().size() == this.getOpponent().get().getSalvos().size()) {
+                            List<Long> mySunks = this.getSalvos().stream().filter(x -> x.getTurn() == this.getSalvos().size()).flatMap(x -> x.getSunks().stream()).map(Ship::getId).collect(toList());
+                            List<Long> opponentSunks = this.getOpponent().get().getSalvos().stream().filter(x -> x.getTurn() == this.getSalvos().size()).flatMap(x -> x.getSunks().stream()).map(Ship::getId).collect(toList());
+
+                            if (mySunks.size() == 5 && opponentSunks.size() == 5) {
+                                return GameStatus.TIE;
+                            } else if (mySunks.size() == 5) {
+                                return GameStatus.WIN;
+                            } else if (opponentSunks.size() == 5) {
+                                return GameStatus.LOSE;
+                            } else {
+                                return GameStatus.PLACE_SALVOS;
+                            }
+                        } else {
+                            return GameStatus.PLACE_SALVOS;
+                        }
+                    }
+                }
+            } else {
+                return GameStatus.WAIT_OPPONENT;
+            }
+        }
+    }
 }
+

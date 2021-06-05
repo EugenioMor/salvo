@@ -36,7 +36,7 @@ public class Ship {
     }
 
     public void setId(long id) {
-        id = id;
+        this.id = id;
     }
 
     public GamePlayer getGamePlayer() {

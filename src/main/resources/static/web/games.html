@@ -57,7 +57,7 @@
                     <h2 class="games-title">All Games</h2>
                     <ol class="ol-list">
                         <li v-for="game in games">
-                            <div>{{" Date: " + game.date}} </div>
+                            <div>{{" Date: " + game.date}}</div>
                             <ul><br>
                                 <li v-for="gamePlayer in game.GamePlayers">
                                     <span v-if="currentUser != null && currentUser.id == gamePlayer.player.id"><a
