@@ -263,14 +263,13 @@ var app = new Vue({
                 PLACE_SHIPS: "Place your ships",
                 WAIT_OPPONENT: "Waiting for the opponent...",
                 WAIT_OPPONENT_SHIPS: "Waiting for the opponent to place their ships...",
-                WAIT_OPPONENT_SALVOS: "Waiting for the opponent's salvoes",
+                WAIT_OPPONENT_SALVOS: "Waiting for the opponent's salvoes...",
                 PLACE_SALVOS: "Place your salvoes",
                 TIE: "Has been a draw!",
-                WIN: "You win!",
+                WIN: " You win!",
                 LOSE: "You lost!"
             }
             app.statusGame = status[app.gameView.gameState]
-
         },
 
         reloadStatus: function () {

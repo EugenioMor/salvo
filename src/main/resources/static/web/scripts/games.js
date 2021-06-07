@@ -114,12 +114,12 @@ var app = new Vue({
                 .done(function () {
                     location.reload();
                 })
-                .fail(function () {
+                .fail(function (response) {
                     Swal.fire({
                         position: 'center',
                         icon: 'error',
-                        title: 'You must complete all fields',
-                        timer: 1000
+                        title: JSON.parse(response.responseText).error,
+                        timer: 2000
                     })
                 })
         },
@@ -134,9 +134,9 @@ var app = new Vue({
                     Swal.fire({
                         position: 'center',
                         icon: 'success',
-                        title: 'You logged in!',
+                        title: JSON.parse(response.responseText).error,
                         showConfirmButton: false,
-                        timer: 500
+                        timer: 2000
                     })
                 })
                 .fail(function () {
@@ -156,6 +156,14 @@ var app = new Vue({
                     app.currentUser = null;
                     location.reload();
                 })
+                .fail(function (response) {
+                    Swal.fire({
+                        position: 'center',
+                        icon: 'error',
+                        title: JSON.parse(response.responseText).error,
+                        timer: 2000
+                    })
+                })
         },
         //función para crear juego
         createGame: function () {
@@ -171,17 +179,5 @@ var app = new Vue({
                     location.href = "/web/game.html?gp=" + data.gpid;
                 })
         },
-
-        // createdDate: function () {
-        //     let today = new Date();
-        //     let day = today.getDate();
-        //     let month = today.getMonth() + 1;
-        //     let year = today.getFullYear();
-        //     let hours = today.getHours();
-        //     let minutes = today.getMinutes();
-        //     let seconds = today.getSeconds();
-        //     app.gameView.created = `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-        // },
-
     }
 })
