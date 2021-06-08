@@ -1,5 +1,7 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.controllers;
 
+import com.codeoftheweb.salvo.models.*;
+import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
