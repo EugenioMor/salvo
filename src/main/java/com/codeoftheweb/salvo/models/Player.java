@@ -1,10 +1,8 @@
 package com.codeoftheweb.salvo.models;
 
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.util.*;
-
 import static java.util.stream.Collectors.toList;
 
 @Entity
