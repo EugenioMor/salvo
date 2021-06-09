@@ -1,13 +1,3 @@
-fetch("/api/games")
-    .then(function (response) {
-        return response.json();
-    })
-    .then(function (data) {
-        app.currentUser = data.player;
-        app.games = data.games;
-        app.leaderBoard();
-    })
-
 var app = new Vue({
     el: "#app",
     data: {
@@ -19,6 +9,18 @@ var app = new Vue({
     },
 
     methods: {
+        gamesData: function () {
+            fetch("/api/games")
+                .then(function (response) {
+                    return response.json();
+                })
+                .then((data) => {
+                    this.currentUser = data.player;
+                    this.games = data.games;
+                    this.leaderBoard();
+                })
+        },
+
         //Obtención de los jugadores
         getPlayers: function () {
             var mailsArray = [];
@@ -179,5 +181,9 @@ var app = new Vue({
                     location.href = "/web/game.html?gp=" + data.gpid;
                 })
         },
+    },
+
+    mounted: function () {
+        this.gamesData();
     }
 })

@@ -287,7 +287,6 @@ var app = new Vue({
                     return response.json();
                 })
                 .then((data) => {
-                    console.log(data)
                     this.gameView = data;
                     if (this.gameView != null) {
                         this.paintShips();
