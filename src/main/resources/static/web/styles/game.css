@@ -36,6 +36,8 @@ table {
 
 th,
 td {
+    width: 9.09%;
+    text-align: center;
     background-color: rgb(168, 155, 155) !important;
     color: black;
     opacity: 85%;

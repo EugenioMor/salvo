@@ -280,7 +280,7 @@ var app = new Vue({
         },
 
         getData: function () {
-            var url = "http://localhost:8080/api/game_view/" + gamePlayerId;
+            var url = "/api/game_view/" + gamePlayerId;
 
             fetch(url)
                 .then(function (response) {
