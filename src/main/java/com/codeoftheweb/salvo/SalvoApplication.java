@@ -1,8 +1,9 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.models.Player;
-import com.codeoftheweb.salvo.repositories.PlayerRepository;
+import com.codeoftheweb.salvo.models.*;
+import com.codeoftheweb.salvo.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -23,19 +24,21 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.time.LocalDateTime;
+import java.util.List;
 
 
 @SpringBootApplication
 public class SalvoApplication extends SpringBootServletInitializer {
 
-    /*@Autowired
+    @Autowired
     private PasswordEncoder passwordEncoder;
-    */
+
     public static void main(String[] args) {
         SpringApplication.run(SalvoApplication.class, args);
     }
 
-    /*@Bean
+    @Bean
     public CommandLineRunner initData(
             PlayerRepository playerRepository,
             GameRepository gameRepository,
@@ -122,12 +125,12 @@ public class SalvoApplication extends SpringBootServletInitializer {
             salvoRepository.save(salvo5);
 
 
-            Score score1 = new Score(0.5, LocalDateTime.now(), game1, player1);
-            Score score2 = new Score(0.5, LocalDateTime.now(), game1, player2);
-            Score score3 = new Score(1, LocalDateTime.now(), game2, player3);
-            Score score4 = new Score(0, LocalDateTime.now(), game2, player4);
-            Score score5 = new Score(1, LocalDateTime.now(), game3, player2);
-            Score score6 = new Score(0, LocalDateTime.now(), game3, player1);
+            Score score1 = new Score(LocalDateTime.now(), game1, player1, 0.5);
+            Score score2 = new Score(LocalDateTime.now(), game1, player2, 0.5);
+            Score score3 = new Score(LocalDateTime.now(), game2, player3, 1);
+            Score score4 = new Score(LocalDateTime.now(), game2, player4, 0);
+            Score score5 = new Score(LocalDateTime.now(), game3, player2, 1);
+            Score score6 = new Score(LocalDateTime.now(), game3, player1, 0);
 
             scoreRepository.save(score1);
             scoreRepository.save(score2);
@@ -136,7 +139,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
             scoreRepository.save(score5);
             scoreRepository.save(score6);
         };
-    }*/
+    }
 }
 
 @Configuration
